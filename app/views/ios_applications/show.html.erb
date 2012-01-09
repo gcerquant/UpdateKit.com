@@ -1,0 +1,47 @@
+
+<p>
+  <b>Title:</b>
+  <%= @ios_application.title %>
+</p>
+
+<p>
+  <b>Application bundle identifier:</b>
+  <%= @ios_application.application_bundle_identifier %>
+</p>
+
+<p>
+  <b>Apple identifier:</b>
+  <%= @ios_application.apple_identifier %>
+</p>
+
+<p>
+  <b>Published version number </b> <%= @ios_application.manual_version_management ? "(Manually managed)" : "(Fetched from AppStore)" %>:
+  <%= @ios_application.published_version_number %><br>
+<%= link_to 'Update Now from AppStore', ios_application_fetch_version_number_path(@ios_application) unless @ios_application.manual_version_management %>
+</p>
+
+<% if @ios_application.manual_version_management %>
+<p>
+  <b>Custom published url:</b>
+  <%= @ios_application.custom_published_url %>
+</p>
+<% end %>
+
+<%= if @ios_application.protected_by_owner?
+		if @ios_application.owner == current_user
+			
+			"This application is protected by you."
+			 
+			link_to("Remove ownership.", ios_application_unprotect_application_path(@ios_application), :confirm => "Everyone will be able to edit and protect this application.\nAre you sure?")
+		else
+			
+			"This application is protected. Only the owner can edit it."
+		end
+	else
+		link_to "Protect this Application", ios_application_protect_application_path(@ios_application)
+	end
+%>
+<br>
+
+<%= link_to 'Edit', edit_ios_application_path(@ios_application) %> |
+<%= link_to 'Back', ios_applications_path %>

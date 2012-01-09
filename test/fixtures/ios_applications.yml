@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  title: MyString
+  application_bundle_identifier: MyString
+  apple_identifier: MyString
+  published_version_number: MyString
+  custom_published_url: MyString
+
+two:
+  title: MyString
+  application_bundle_identifier: MyString
+  apple_identifier: MyString
+  published_version_number: MyString
+  custom_published_url: MyString

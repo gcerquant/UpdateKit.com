@@ -1,0 +1,59 @@
+<%= form_for(@ios_application) do |f| %>
+  <% if @ios_application.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@ios_application.errors.count, "error") %> prohibited this ios_application from being saved:</h2>
+
+      <ul>
+      <% @ios_application.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <b><%= f.label :title %><br /></b>
+    <%= f.text_field :title, :placeholder => "SuperAwesomeApplication" %> (optional)
+	<div id="help">Only displayed on UpdateKit.com interface, to help you see which application you are editing.</div>
+  </div>
+  <div class="field">
+    <b><%= f.label :application_bundle_identifier %><br /></b>
+    <%= 
+	if params[:bundle_identifier]
+		f.text_field :application_bundle_identifier, :value => params[:bundle_identifier], :placeholder => "com.mycompany.superawesomeapplication" 
+	else
+ 		f.text_field :application_bundle_identifier, :placeholder => "com.mycompany.superawesomeapplication"
+	end
+ 		%>
+	<div id="help">Your application bundle identifier (<em>Bundle identifier</em> key of your <em>Info.plist</em> file.)</div>
+	
+  </div>
+
+
+
+  <div class="field">
+    <b><%= f.label "Automatic / manual mode" %><br /></b>
+    <%= f.check_box :manual_version_management %> Version is manually managed
+	<div id="help">Check it if you want to manually define your application version number and download url.<br>Leave it unchecked if you want the application version number to be automatically fetched from the AppStore.</div>
+  </div>
+
+  <div class="field">
+    <b><%= f.label :apple_identifier %><br /></b>
+    <%= f.text_field :apple_identifier, :class => "automatic_version_management", :placeholder => "123456789" %> (optional)
+	<div id="help">AppleID of your application (Listed on iTunes Connect)</div>
+	
+  </div>
+
+	<div class="field">
+    <%= f.label :published_version_number %><br />
+    <%= f.text_field :published_version_number, :class => "manual_version_management" %>
+  </div>
+  <div class="field">
+    <%= f.label :custom_published_url %><br />
+    <%= f.text_field :custom_published_url, :class => "manual_version_management" %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

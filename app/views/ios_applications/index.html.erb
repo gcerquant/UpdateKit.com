@@ -1,0 +1,27 @@
+<h1>Listing iOS applications</h1>
+
+<table>
+  <tr>
+    <th>Title</th>
+    <th>Application bundle identifier</th>
+    <th>Published version number</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @ios_applications.each do |ios_application| %>
+  <tr title=" <%= (ios_application.manual_version_management ? "Manual mode" : "Automatic mode") + " - AppleID: #{ios_application.apple_identifier}" %> ">
+    <td><%= ios_application.title %></td>
+    <td><%= ios_application.application_bundle_identifier %></td>
+    <td><%= ios_application.published_version_number %></td>
+    <td><%= link_to 'Show', ios_application %></td>
+    <td><%= link_to 'Edit', edit_ios_application_path(ios_application) %></td>
+    <td><%= link_to 'Destroy', ios_application, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to "New #{:ios_application}", new_ios_application_path %>
