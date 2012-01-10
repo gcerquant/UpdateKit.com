@@ -30,7 +30,7 @@ class IosApplicationsController < ApplicationController
     
     
     if @ios_application.nil?
-      redirect_to new_ios_application_path ( :bundle_identifier => params[:bundle_identifier] ), :notice => "No iOS application found for #{params[:bundle_identifier]}. Would you like to create it?"
+      redirect_to new_ios_application_path( :bundle_identifier => params[:bundle_identifier] ), :notice => "No iOS application found for #{params[:bundle_identifier]}. Would you like to create it?"
        return
     end
     
