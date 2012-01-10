@@ -27,20 +27,16 @@
 </p>
 <% end %>
 
-<%= if @ios_application.protected_by_owner?
-		if @ios_application.owner == current_user
-			
-			"This application is protected by you."
-			 
-			link_to("Remove ownership.", ios_application_unprotect_application_path(@ios_application), :confirm => "Everyone will be able to edit and protect this application.\nAre you sure?")
-		else
-			
-			"This application is protected. Only the owner can edit it."
-		end
-	else
-		link_to "Protect this Application", ios_application_protect_application_path(@ios_application)
-	end
-%>
+<% if @ios_application.protected_by_owner?
+		if @ios_application.is_owned_by(current_user) %>
+			 This application is protected by you.
+			<%=			link_to("Remove ownership.", ios_application_unprotect_application_path(@ios_application), :confirm => "Everyone will be able to edit and protect this application.\nAre you sure?") %>
+<%		else %>
+	This application is protected. Only the owner can edit it.
+<% 		end
+	else %>
+<%= 		link_to "Protect this Application", ios_application_protect_application_path(@ios_application) %>
+<%	end %>
 <br>
 
 <%= link_to 'Edit', edit_ios_application_path(@ios_application) %> |

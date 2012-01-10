@@ -9,6 +9,8 @@ gem 'rails', '3.1.3'
 gem 'json'
 
 gem 'devise'
+gem 'cancan'
+
 gem 'plist'
 
 gem 'hpricot'

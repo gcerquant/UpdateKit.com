@@ -5,3 +5,12 @@
  *= require_self
  *= require_tree . 
 */
+
+
+.application_owned_by_me {
+	font-weight: bold;
+}
+
+.application_owned_by_someone_else {
+	font-style: italic;
+}

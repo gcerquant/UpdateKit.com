@@ -4,8 +4,10 @@ require 'open-uri'
 class IosApplicationsController < ApplicationController
   
   
+  load_and_authorize_resource
+  
   before_filter :authenticate_user!,
-      :only => [:protect_application, :unprotect_application]
+       :only => [:protect_application, :unprotect_application]
       
       
       
@@ -30,7 +32,7 @@ class IosApplicationsController < ApplicationController
     
     
     if @ios_application.nil?
-      redirect_to new_ios_application_path( :bundle_identifier => params[:bundle_identifier] ), :notice => "No iOS application found for #{params[:bundle_identifier]}. Would you like to create it?"
+      redirect_to new_ios_application_path(:bundle_identifier => params[:bundle_identifier] ), :notice => "No iOS application found for #{params[:bundle_identifier]}. Would you like to create it?"
        return
     end
     
@@ -55,7 +57,9 @@ class IosApplicationsController < ApplicationController
 
   # GET /ios_applications/1/edit
   def edit
-    @ios_application = IosApplication.find(params[:id])
+    # @ios_application = IosApplication.find(params[:id])
+    # 
+    # authorize! :update, @ios_application
   end
 
   # POST /ios_applications
@@ -126,15 +130,26 @@ class IosApplicationsController < ApplicationController
       return
     end
       
+    if @ios_application.manual_version_management
+      redirect_to @ios_application, :alert => "It is not possible to fetch the version number of a manually managed application"
+      return
+    end
+    
+    if @ios_application.apple_identifier.nil? || @ios_application.apple_identifier == ""
+      redirect_to @ios_application, :alert => "It is not possible to fetch the version number of an application without an AppleID"
+      return
+    end
+    
     url_of_application_on_app_store = "http://itunes.apple.com/app/id" + @ios_application.apple_identifier + "?mt=8"
+    puts "URL: #{url_of_application_on_app_store}"
+    
 
 
     
     # Get a Nokogiri::HTML:Document for the page we’re interested in...
     # doc = Nokogiri::HTML(open('http://itunes.apple.com/fr/app/tictacboo-new-rule-for-tictactoe/id359435914?mt=8'))
-    puts "HHHH: #{url_of_application_on_app_store}"
     doc = open(url_of_application_on_app_store) { |f| Hpricot(f) }
-    puts "My doc: #{doc}"
+    # puts "My doc: #{doc}"
     
     if doc.nil?
       redirect_to @ios_application, :alert => "Unable to download application page from Apple"
@@ -170,23 +185,6 @@ class IosApplicationsController < ApplicationController
     
   end
   
-  # Only the user associated with it can edit it later on
-  def protect_application
-    @ios_application = IosApplication.find(params[:id])
-
-    if (@ios_application.user.nil? || current_user.id == @ios_application.user.id)
-      # No previous owner, or I am the owner
-      @ios_application.user = current_user
-      if @ios_application.save
-        redirect_to @ios_application, :notice => "This application is now protected. Only you can edit it."
-      else
-        redirect_to @ios_application, :alert => "Failed to protect this application."
-      end
-    else
-      puts "This should not be possible"
-      redirect_to @ios_application, :alert => "Someone else owns this application"
-    end
-  end
   
   # Only the user associated with it can edit it later on
   def protect_application

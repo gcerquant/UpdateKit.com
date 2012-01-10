@@ -11,14 +11,30 @@
   </tr>
 
 <% @ios_applications.each do |ios_application| %>
-  <tr title=" <%= (ios_application.manual_version_management ? "Manual mode" : "Automatic mode") + " - AppleID: #{ios_application.apple_identifier}" %> ">
+  <tr title=" <%= (ios_application.manual_version_management ? "Manual mode" : "Automatic mode") + " - AppleID: #{ios_application.apple_identifier || "unknown"}" %> " class="<%= 
+	if ios_application.is_owned_by(current_user)
+		"application_owned_by_me"
+	else
+		if ios_application.owner
+			"application_owned_by_someone_else"
+		else
+			""
+		end
+	end
+	%>" >
     <td><%= ios_application.title %></td>
     <td><%= ios_application.application_bundle_identifier %></td>
     <td><%= ios_application.published_version_number %></td>
+
     <td><%= link_to 'Show', ios_application %></td>
+<% if can? :update, ios_application %>
     <td><%= link_to 'Edit', edit_ios_application_path(ios_application) %></td>
+<% end %>
+<% if can? :destroy, ios_application %>
     <td><%= link_to 'Destroy', ios_application, :confirm => 'Are you sure?', :method => :delete %></td>
+<% end %>
   </tr>
+
 <% end %>
 </table>
 

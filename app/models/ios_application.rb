@@ -30,6 +30,10 @@ class IosApplication < ActiveRecord::Base
     def owner
       return self.user
     end
+    
+    def is_owned_by(me)
+      return owner == me && (! me.nil? )
+    end
   
     def protected_by_owner?
       return self.user
