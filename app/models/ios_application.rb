@@ -1,3 +1,8 @@
+require 'hpricot'
+require 'open-uri'
+
+require 'active_support' # I want to be able to use .try()
+
 class IosApplication < ActiveRecord::Base
   
   require 'devise'
@@ -43,5 +48,76 @@ class IosApplication < ActiveRecord::Base
     def update_url
       manual_version_management ? custom_published_url : "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=#{apple_identifier}&mt=8"
     end
+    
+    
+    def self.update_all_applications_version_number
+      IosApplication.find(:all, :conditions => { :manual_version_management => false }).each do |ios_application|
+        puts "Getting version number for: #{ios_application.application_bundle_identifier}"
+        ios_application.fetch_version_number_from_apple_server
+      end
+    end
+    
+    
+    def fetch_version_number_from_apple_server
+      if apple_identifier.nil?
+        return :alert => "Unable to fetch version number because AppleID is not specified"
+      end
 
+      if manual_version_management
+        return :alert => "It is not possible to fetch the version number of a manually managed application"
+      end
+
+      if apple_identifier.nil? || apple_identifier == ""
+        return :alert => "It is not possible to fetch the version number of an application without an AppleID"
+      end
+
+      url_of_application_on_app_store = "http://itunes.apple.com/app/id" + apple_identifier + "?mt=8"
+      # puts "URL: #{url_of_application_on_app_store}"
+
+
+
+
+      # Get a Nokogiri::HTML:Document for the page we’re interested in...
+      # doc = Nokogiri::HTML(open('http://itunes.apple.com/fr/app/tictacboo-new-rule-for-tictactoe/id359435914?mt=8'))
+      doc = open(url_of_application_on_app_store) { |f| Hpricot(f) }
+      # puts "My doc: #{doc}"
+
+      if doc.nil?
+        return :alert => "Unable to download application page from Apple"
+      end
+
+      mydiv = doc.search("div[@id=left-stack]").try(:first)
+      # puts "MY DIV:\n #{mydiv}"
+
+
+      if (mydiv.nil?)
+        return :alert => "Did not find the div containing the information about the application"
+      end
+      # puts "My div: '#{mydiv}' - #{mydiv.nil?} - #{mydiv == ""}"
+      
+      myul = mydiv.search("ul[@class=list]").first
+      # puts "MY UL : #{myul}"
+
+
+      html_element = myul.search("li").at(3)
+
+      if html_element.nil?
+        return :alert => "Unable to parse version number from Apple"
+      end
+
+      fetched_version_number = html_element.inner_html
+      fetched_version_number.slice! '<span class="label">Version : </span>'
+      fetched_version_number.slice! '<span class="label">Version: </span>'
+
+      self.published_version_number = fetched_version_number
+
+      puts "Got version number: #{published_version_number}"
+      if (self.save)
+        return :notice => "Updated version number from AppStore (#{fetched_version_number})"
+      else
+        return :alert => "Fetched version number from AppStore (#{fetched_version_number}), but unable to save it."
+      end
+    
+    end
+    
 end

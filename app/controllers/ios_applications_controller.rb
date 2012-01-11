@@ -121,67 +121,70 @@ class IosApplicationsController < ApplicationController
   end
   
   
+  
   def fetch_version_number
     @ios_application = IosApplication.find(params[:id])
     
+    result = @ios_application.fetch_version_number_from_apple_server
+    redirect_to @ios_application, result
     
-    if @ios_application.apple_identifier.nil?
-      redirect_to @ios_application, :alert => "Unable to fetch version number because AppleID is not specified"
-      return
-    end
-      
-    if @ios_application.manual_version_management
-      redirect_to @ios_application, :alert => "It is not possible to fetch the version number of a manually managed application"
-      return
-    end
-    
-    if @ios_application.apple_identifier.nil? || @ios_application.apple_identifier == ""
-      redirect_to @ios_application, :alert => "It is not possible to fetch the version number of an application without an AppleID"
-      return
-    end
-    
-    url_of_application_on_app_store = "http://itunes.apple.com/app/id" + @ios_application.apple_identifier + "?mt=8"
-    puts "URL: #{url_of_application_on_app_store}"
-    
-
-
-    
-    # Get a Nokogiri::HTML:Document for the page we’re interested in...
-    # doc = Nokogiri::HTML(open('http://itunes.apple.com/fr/app/tictacboo-new-rule-for-tictactoe/id359435914?mt=8'))
-    doc = open(url_of_application_on_app_store) { |f| Hpricot(f) }
-    # puts "My doc: #{doc}"
-    
-    if doc.nil?
-      redirect_to @ios_application, :alert => "Unable to download application page from Apple"
-      return
-    end
-
-    mydiv = doc.search("div[@id=left-stack]") #    ="1" class="lockup product application"
-    puts "MY DIV:\n #{mydiv}"
-    
-    myul = mydiv.search("ul[@class=list]").first
-    puts "MY UL : #{myul}"
-
-
-    html_element = myul.search("li").at(3)
-    
-    if html_element.nil?
-      redirect_to @ios_application, :alert => "Unable to parse version number from Apple"
-      return
-    end
-    
-    fetched_version_number = html_element.inner_html
-    fetched_version_number.slice! '<span class="label">Version : </span>'
-    fetched_version_number.slice! '<span class="label">Version: </span>'
-
-    @ios_application.published_version_number = fetched_version_number
-    
-    if (@ios_application.save)
-      redirect_to @ios_application, :notice => "Updated version number from AppStore (#{fetched_version_number})"
-    else
-      redirect_to @ios_application, :alert => "Fetched version number from AppStore (#{fetched_version_number}), but unable to save it."
-    end
-    # return
+    # if @ios_application.apple_identifier.nil?
+    #   redirect_to @ios_application, :alert => "Unable to fetch version number because AppleID is not specified"
+    #   return
+    # end
+    #   
+    # if @ios_application.manual_version_management
+    #   redirect_to @ios_application, :alert => "It is not possible to fetch the version number of a manually managed application"
+    #   return
+    # end
+    # 
+    # if @ios_application.apple_identifier.nil? || @ios_application.apple_identifier == ""
+    #   redirect_to @ios_application, :alert => "It is not possible to fetch the version number of an application without an AppleID"
+    #   return
+    # end
+    # 
+    # url_of_application_on_app_store = "http://itunes.apple.com/app/id" + @ios_application.apple_identifier + "?mt=8"
+    # # puts "URL: #{url_of_application_on_app_store}"
+    # 
+    # 
+    # 
+    # 
+    # # Get a Nokogiri::HTML:Document for the page we’re interested in...
+    # # doc = Nokogiri::HTML(open('http://itunes.apple.com/fr/app/tictacboo-new-rule-for-tictactoe/id359435914?mt=8'))
+    # doc = open(url_of_application_on_app_store) { |f| Hpricot(f) }
+    # # puts "My doc: #{doc}"
+    # 
+    # if doc.nil?
+    #   redirect_to @ios_application, :alert => "Unable to download application page from Apple"
+    #   return
+    # end
+    # 
+    # mydiv = doc.search("div[@id=left-stack]") #    ="1" class="lockup product application"
+    # puts "MY DIV:\n #{mydiv}"
+    # 
+    # myul = mydiv.search("ul[@class=list]").first
+    # puts "MY UL : #{myul}"
+    # 
+    # 
+    # html_element = myul.search("li").at(3)
+    # 
+    # if html_element.nil?
+    #   redirect_to @ios_application, :alert => "Unable to parse version number from Apple"
+    #   return
+    # end
+    # 
+    # fetched_version_number = html_element.inner_html
+    # fetched_version_number.slice! '<span class="label">Version : </span>'
+    # fetched_version_number.slice! '<span class="label">Version: </span>'
+    # 
+    # @ios_application.published_version_number = fetched_version_number
+    # 
+    # if (@ios_application.save)
+    #   redirect_to @ios_application, :notice => "Updated version number from AppStore (#{fetched_version_number})"
+    # else
+    #   redirect_to @ios_application, :alert => "Fetched version number from AppStore (#{fetched_version_number}), but unable to save it."
+    # end
+    # # return
     
   end
   
