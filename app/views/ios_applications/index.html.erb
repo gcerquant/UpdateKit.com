@@ -1,3 +1,13 @@
+<%
+# Don't know why, the notice / alert is kept one time too much. Which means, you can have an alert and a notice at the same time
+# Steps to reproduce the bug: do a search. Message (alert or notice) will be visible. reload the page without the search params. Notice message is still here
+if @ios_applications.size.zero?
+  flash[:alert] = "No iOS application found." 
+elsif (params[:search])
+  flash[:notice] = "Found #{pluralize(@ios_applications.size, 'application')}"
+end
+%>
+
 <h1>Listing iOS applications</h1>
 
 <table>
@@ -40,4 +50,12 @@
 
 <br />
 
-<%= link_to "New #{:ios_application}", new_ios_application_path %>
+<%= link_to "Create a New iOS application", new_ios_application_path %>
+<div id="search">
+<%= form_tag ios_applications_path, :method => "get" do %>
+	<p>
+		<%= text_field_tag :search, params[:search], :size => 40, :placeholder => "Title, bundle identifier or AppleID" %>
+		<%= submit_tag "Search", :name => nil %>
+	</p>
+<% end %>
+</div>

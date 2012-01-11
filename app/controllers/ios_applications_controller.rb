@@ -3,6 +3,7 @@
 require 'hpricot'
 require 'open-uri'
 
+
 class IosApplicationsController < ApplicationController
   
   
@@ -16,8 +17,8 @@ class IosApplicationsController < ApplicationController
   # GET /ios_applications
   # GET /ios_applications.json
   def index
-    @ios_applications = IosApplication.all
-
+    @ios_applications = IosApplication.search(params[:search])
+    
     respond_to do |format|
       format.html # index.html.erb
       format.json { render :json => @ios_applications }

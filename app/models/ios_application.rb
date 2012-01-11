@@ -31,6 +31,13 @@ class IosApplication < ActiveRecord::Base
       :with => /\A[0-9]{9}\z/,
         :message => "An AppleID should contain only exactly 9 digits. Find your AppleID on iTunes Connect." }
   
+    def self.search(search)
+      if search
+        find(:all, :conditions => ['title LIKE ? OR application_bundle_identifier LIKE ? OR apple_identifier LIKE ?', "%#{search}%", "%#{search}%", "%#{search}%"])
+      else
+        find(:all)
+      end
+    end
   
     def owner
       return self.user
