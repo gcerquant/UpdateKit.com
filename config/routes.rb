@@ -5,6 +5,7 @@ UpdateKitCom::Application.routes.draw do
   
   
   match 'ios_applications/bundle_identifier/:bundle_identifier/update_info' => 'ios_applications#update_info', :bundle_identifier => /[a-z].+/i
+  match 'ios_applications/bundle_identifier/:bundle_identifier/redirect_to_product_page' => 'ios_applications#redirect_to_product_page', :bundle_identifier => /[a-z].+/i
 
   match 'ios_applications/bundle_identifier/:bundle_identifier' => 'ios_applications#show', :bundle_identifier => /[a-z].+/i, :as => "ios_application_register_bundle_identifier"
 

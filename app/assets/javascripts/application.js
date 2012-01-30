@@ -10,18 +10,36 @@
 
 
 
+function show_or_hide_version_management_modes_div(automaticMode) {	
 
-$(function() {
-  show_or_hide_version_management_modes_div();
-  $("#ios_application_manual_version_management").click(show_or_hide_version_management_modes_div);
-});
-
-function show_or_hide_version_management_modes_div() {
-  if (this.checked) {
-    $("input.manual_version_management").removeAttr("disabled");
-    $("input.automatic_version_management").attr("disabled", true);
-  } else {
-    $("input.automatic_version_management").removeAttr("disabled");
-    $("input.manual_version_management").attr("disabled", true);
-  }
+	if (automaticMode) {						
+		$('span#update_mode_status').html("Version number is <b>automatically updated</b> from the AppStore.");
+		
+		// $("input.automatic_version_management").removeAttr("disabled");
+	    $("input.manual_version_management_class").attr("disabled", true);
+	    
+	} else {
+		$('span#update_mode_status').html("Version number is <b>manually managed</b> by you.");
+		
+		$("input.manual_version_management_class").removeAttr("disabled");
+	    // $("input.automatic_version_management").attr("disabled", true); // Was there for appleID field
+	    
+	}
 }
+
+
+
+$(document).ready(function() {
+	
+      $("#ios_application_manual_version_management").iphoneStyle(
+	{
+		checkedLabel: 'Automatic', uncheckedLabel: 'Manual' ,
+					        onChange: function(elem, value) { 
+					show_or_hide_version_management_modes_div(value);
+			        }
+			}
+		);
+	
+
+	show_or_hide_version_management_modes_div( $("#ios_application_manual_version_management").is(":checked") );
+});

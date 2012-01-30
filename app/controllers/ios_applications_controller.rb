@@ -115,15 +115,24 @@ class IosApplicationsController < ApplicationController
     
     if @ios_application
       # todo : only return new_version_number key if it is relevant (ie, there is an update)
-      # same for appleID
-      render :json => {"update_is_available" => @ios_application.published_version_number != params[:version_number], "new_version_number" => @ios_application.published_version_number, "appleID" => @ios_application.apple_identifier, "update_url" => @ios_application.update_url }
+      # same for appleID (we want it in all case)
+      render :json => {"update_is_available" => @ios_application.published_version_number != params[:version_number], "new_version_number" => @ios_application.published_version_number, "appleID" => @ios_application.apple_identifier, "update_url" => @ios_application.update_url, "product_url" => @ios_application.product_url }
     else
       render :json => { "error" => "No application found for identifier #{params[:bundle_identifier]}. Go to #{ios_application_register_bundle_identifier_url} to create it." }
     end
     
   end
   
-  
+  def redirect_to_product_page
+    @ios_application = IosApplication.find_by_application_bundle_identifier(params[:bundle_identifier])
+    
+    if @ios_application
+      redirect_to "#{@ios_application.product_url}"
+    else
+      redirect_to ios_applications_path, :error => "No application found for identifier #{params[:bundle_identifier]}. Go to #{ios_application_register_bundle_identifier_url} to create it."
+    end
+    
+  end
   
   def fetch_version_number
     @ios_application = IosApplication.find(params[:id])

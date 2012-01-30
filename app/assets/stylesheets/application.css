@@ -14,3 +14,8 @@
 .application_owned_by_someone_else {
 	font-style: italic;
 }
+
+
+input[disabled='disabled'] {
+  background-color: #EEE;
+}

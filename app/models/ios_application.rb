@@ -53,7 +53,16 @@ class IosApplication < ActiveRecord::Base
     
     
     def update_url
+      # TODO: Here I should add the itms protocol:
+      # itms-services://?action=download-manifest&url=...
+      # And user should only link toward an ipa, not a manifest (makes it easier)
       manual_version_management ? custom_published_url : "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=#{apple_identifier}&mt=8"
+    end
+    
+    # TODO: Can be on the AppStore, or just local
+    def product_url
+      # TODO A tester here!
+      manual_version_management ? custom_published_url : "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{apple_identifier}&mt=8"
     end
     
     

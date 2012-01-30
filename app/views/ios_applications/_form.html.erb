@@ -32,25 +32,28 @@
 
 
   <div class="field">
-    <b><%= f.label "Automatic / manual mode" %><br /></b>
-    <%= f.check_box :manual_version_management %> Version is manually managed
-	<div id="help">Check it if you want to manually define your application version number and download url.<br>Leave it unchecked if you want the application version number to be automatically fetched from the AppStore.</div>
+    <b><%= f.label "Version number update mode:" %><br /></b>
+    <%= f.check_box :manual_version_management %> <span id="update_mode_status"> Version is manually managed</span><br>
+	<div id="help"><br>
+    <i>Automatic mode</i>: application version number is automatically fetched from the AppStore.<br>
+	  <i>Manual mode</i>: application version number and download url is manually set by you.<br>
+	  </div>
   </div>
 
   <div class="field">
     <b><%= f.label :apple_identifier %><br /></b>
-    <%= f.text_field :apple_identifier, :class => "automatic_version_management", :placeholder => "123456789" %> (optional)
+    <%= f.text_field :apple_identifier, :placeholder => "123456789" %> (optional)
 	<div id="help">AppleID of your application (Listed on iTunes Connect)</div>
 	
   </div>
 
 	<div class="field">
     <%= f.label :published_version_number %><br />
-    <%= f.text_field :published_version_number, :class => "manual_version_management" %>
+    <%= f.text_field :published_version_number, :class => "manual_version_management_class" %>
   </div>
   <div class="field">
     <%= f.label :custom_published_url %><br />
-    <%= f.text_field :custom_published_url, :class => "manual_version_management" %>
+    <%= f.text_field :custom_published_url, :class => "manual_version_management_class" %>
   </div>
 
   <div class="actions">
