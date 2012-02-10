@@ -72,6 +72,12 @@ class IosApplication < ActiveRecord::Base
         ios_application.fetch_version_number_from_apple_server
       end
     end
+
+    def self.update_all_applications_information_from_apple
+      IosApplication.find(:all).each do |ios_application|
+        ios_application.fetch_application_information_from_apple_api
+      end
+    end
     
     
     def fetch_application_information_from_apple_api
@@ -101,6 +107,7 @@ class IosApplication < ActiveRecord::Base
     
     
     def fetch_version_number_from_apple_server
+      # TODO: The call below is only temporary. Finish the job
       fetch_application_information_from_apple_api()
       
       if apple_identifier.nil?
