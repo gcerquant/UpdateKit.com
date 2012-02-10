@@ -75,10 +75,10 @@ class IosApplication < ActiveRecord::Base
     
     
     def fetch_application_information_from_apple_api
-      puts "HIIIIIIII"
-      
+      puts "Fetching info for #{application_bundle_identifier} using Apple API."
+      url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup?bundleId=#{application_bundle_identifier}"
       begin
-        json = open "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup?bundleId=#{application_bundle_identifier}"
+        json = open url
       rescue
         # a multitude of HTTP-related errors can occur
       end
@@ -94,7 +94,7 @@ class IosApplication < ActiveRecord::Base
         self.save
         
       else
-        puts "Unexpected number of result in API search"
+        puts "Unexpected number of result in API search\nUrl request: #{url}\nResult: #{application_information}\n"
       end
       
     end
