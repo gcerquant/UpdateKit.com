@@ -36,18 +36,13 @@
 
   <div class="field">
     <b><%= f.label "Version number update mode:" %><br /></b>
-    <%= f.check_box :manual_version_management %> <span id="update_mode_status"> Version is manually managed</span><br>
+    <%= f.check_box :automatic_version_management %> <span id="update_mode_status"> </span><br>
 	<div id="help"><br>
     <i>Automatic mode</i>: application version number is automatically fetched from the AppStore.<br>
 	  <i>Manual mode</i>: application version number and download url is manually set by you.<br>
 	  </div>
   </div>
 
-  <div class="field">
-    <b><%= f.label :apple_identifier %><br /></b>
-    <%= f.text_field :apple_identifier, :placeholder => "123456789" %> (optional)
-	<div id="help">AppleID of your application (Listed on iTunes Connect)</div>
-	
   </div>
 
 	<div class="field">

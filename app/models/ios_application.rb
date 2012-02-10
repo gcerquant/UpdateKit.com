@@ -25,7 +25,7 @@ class IosApplication < ActiveRecord::Base
         # :message => lambda {"some text followed by a link #{link_to "Link to SO", "http://stackoverflow.com" }"}
   # http://developer.apple.com/library/ios/#documentation/CoreFoundation/Conceptual/CFBundles/AboutBundles/AboutBundles.html#//apple_ref/doc/uid/10000123i-CH100-SW4
         
-        
+  
   validates :apple_identifier, :format => {
       :allow_blank => true,
       :with => /\A[0-9]{9}\z/,
@@ -56,18 +56,18 @@ class IosApplication < ActiveRecord::Base
       # TODO: Here I should add the itms protocol:
       # itms-services://?action=download-manifest&url=...
       # And user should only link toward an ipa, not a manifest (makes it easier)
-      manual_version_management ? custom_published_url : "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=#{apple_identifier}&mt=8"
+      automatic_version_management ? "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=#{apple_identifier}&mt=8" : custom_published_url
     end
     
     # TODO: Can be on the AppStore, or just local
     def product_url
       # TODO A tester here!
-      manual_version_management ? custom_published_url : "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{apple_identifier}&mt=8"
+      automatic_version_management ? "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{apple_identifier}&mt=8" : custom_published_url
     end
     
     
     def self.update_all_applications_version_number
-      IosApplication.find(:all, :conditions => { :manual_version_management => false }).each do |ios_application|
+      IosApplication.find(:all, :conditions => { :automatic_version_management => true }).each do |ios_application|
         puts "Getting version number for: #{ios_application.application_bundle_identifier}"
         ios_application.fetch_version_number_from_apple_server
       end
@@ -83,6 +83,7 @@ class IosApplication < ActiveRecord::Base
     def fetch_application_information_from_apple_api
       puts "Fetching info for #{application_bundle_identifier} using Apple API."
       url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup?bundleId=#{application_bundle_identifier}"
+      puts "URL: #{url}"
       begin
         json = open url
       rescue
@@ -94,8 +95,10 @@ class IosApplication < ActiveRecord::Base
       application_information = ActiveSupport::JSON.decode(json_string)
       
       if (application_information['resultCount'] == 1) 
+        self.published_version_number = application_information['results'][0]['version']
         self.icon_small_url = application_information['results'][0]['artworkUrl60']
         self.icon_url = application_information['results'][0]['artworkUrl512']
+        self.title = application_information['results'][0]['artistName'] unless self.title # Only updating it if we have an empty value
         
         self.save
         
@@ -114,7 +117,7 @@ class IosApplication < ActiveRecord::Base
         return :alert => "Unable to fetch version number because AppleID is not specified"
       end
 
-      if manual_version_management
+      if ! automatic_version_management
         return :alert => "It is not possible to fetch the version number of a manually managed application"
       end
 

@@ -111,14 +111,28 @@ class IosApplicationsController < ApplicationController
   
   
   def update_info # refactor this name (it is not the action of updating, but get_update_info)
+    if (params[:bundle_identifier].nil? || params[:bundle_identifier] == "")
+      render :json => {"error" => "Empty bundle identifier"}
+      return
+    end
+
     @ios_application = IosApplication.find_by_application_bundle_identifier(params[:bundle_identifier])
     
-    if @ios_application
+    if ! @ios_application
+      @ios_application = IosApplication.new
+      @ios_application.application_bundle_identifier = params[:bundle_identifier]
+      @ios_application.automatic_version_management = true  # Since the app is automatically created, it should fetch its info from the AppStore
+    end
+    
+    @ios_application.fetch_application_information_from_apple_api
+    
+    if (! @ios_application.published_version_number)
+      render :json => { "error" => "Unable to fetch application version number" }
+    else
       # todo : only return new_version_number key if it is relevant (ie, there is an update)
       # same for appleID (we want it in all case)
-      render :json => {"update_is_available" => @ios_application.published_version_number != params[:version_number], "new_version_number" => @ios_application.published_version_number, "appleID" => @ios_application.apple_identifier, "update_url" => @ios_application.update_url, "product_url" => @ios_application.product_url }
-    else
-      render :json => { "error" => "No application found for identifier #{params[:bundle_identifier]}. Go to #{ios_application_register_bundle_identifier_url} to create it." }
+      @ios_application.save # Only saving created app if we were able to fetch its version number
+      render :json => {"update_is_available" => @ios_application.published_version_number != params[:version_number], "new_version_number" => @ios_application.published_version_number, "update_url" => @ios_application.update_url, "product_url" => @ios_application.product_url }
     end
     
   end

@@ -22,7 +22,7 @@ end
   </tr>
 
 <% @ios_applications.each do |ios_application| %>
-  <tr title=" <%= (ios_application.manual_version_management ? "Manual mode" : "Automatic mode") + " - AppleID: #{ios_application.apple_identifier || "unknown"}" %> " class="<%= 
+  <tr title=" <%= (ios_application.automatic_version_management ? "Automatic mode" : "Manual mode") + " - AppleID: #{ios_application.apple_identifier || "unknown"}" %> " class="<%= 
 	if ios_application.is_owned_by(current_user)
 		"application_owned_by_me"
 	else

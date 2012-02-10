@@ -31,7 +31,7 @@ function show_or_hide_version_management_modes_div(automaticMode) {
 
 $(document).ready(function() {
 	
-      $("#ios_application_manual_version_management").iphoneStyle(
+      $("#ios_application_automatic_version_management").iphoneStyle(
 	{
 		checkedLabel: 'Automatic', uncheckedLabel: 'Manual' ,
 					        onChange: function(elem, value) { 
@@ -41,5 +41,5 @@ $(document).ready(function() {
 		);
 	
 
-	show_or_hide_version_management_modes_div( $("#ios_application_manual_version_management").is(":checked") );
+	show_or_hide_version_management_modes_div( $("#ios_application_automatic_version_management").is(":checked") );
 });
