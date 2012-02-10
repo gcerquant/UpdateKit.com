@@ -19,3 +19,34 @@
 input[disabled='disabled'] {
   background-color: #EEE;
 }
+
+#header {
+	background-color: #c0fff1;
+	margin: 2em;
+	margin-bottom: 4em;
+	padding: 1em;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	text-align: center;
+}
+
+#user_nav {
+	float: right;
+	overflow: auto;
+	clear: right;
+	color: white;
+	padding: 1em;
+	background-color: #686868;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+}
+
+#user_nav a {
+	color: white;
+}
+
+.shadow {
+  -moz-box-shadow:    3px 3px 4px 3px #ccc;
+  -webkit-box-shadow: 3px 3px 4px 3px #ccc;
+  box-shadow:         3px 3px 4px 3px #ccc;
+}
