@@ -147,6 +147,11 @@ class IosApplicationsController < ApplicationController
   def protect_application
     @ios_application = IosApplication.find(params[:id])
 
+    if (@ios_application.application_bundle_identifier == "com.updateKit.demo")
+      redirect_to @ios_application, :alert => "To allow everyone to try the demo, the application com.updatekit.demo can not be protected."
+      return
+    end
+
     if (@ios_application.owner == current_user || ! @ios_application.protected_by_owner? ) # security check
       # No current owner, or I am the owner
       @ios_application.user = current_user
