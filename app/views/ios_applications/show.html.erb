@@ -1,4 +1,7 @@
 
+
+<%= image_tag(@ios_application.icon_url, :size => "256x256") if @ios_application.icon_url %>
+
 <p>
   <b>Title:</b>
   <%= @ios_application.title %>

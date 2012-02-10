@@ -12,6 +12,10 @@ UpdateKitCom::Application.routes.draw do
   match 'ios_applications/:id/fetch_version_number' => "ios_applications#fetch_version_number", :as => "ios_application_fetch_version_number"
   match 'ios_applications/:id/protect' => "ios_applications#protect_application", :as => "ios_application_protect_application"
   match 'ios_applications/:id/unprotect' => "ios_applications#unprotect_application", :as => "ios_application_unprotect_application"
+
+
+
+  match 'cocoa_framework_version' => "application#cocoa_framework_version"
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

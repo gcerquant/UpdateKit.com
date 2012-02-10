@@ -11,6 +11,9 @@
     </div>
   <% end %>
 
+
+  <%= image_tag(@ios_application.icon_url, :size => "256x256") if @ios_application.icon_url %>
+
   <div class="field">
     <b><%= f.label :title %><br /></b>
     <%= f.text_field :title, :placeholder => "SuperAwesomeApplication" %> (optional)

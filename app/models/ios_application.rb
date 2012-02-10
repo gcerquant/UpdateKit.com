@@ -74,7 +74,35 @@ class IosApplication < ActiveRecord::Base
     end
     
     
+    def fetch_application_information_from_apple_api
+      puts "HIIIIIIII"
+      
+      begin
+        json = open "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup?bundleId=#{application_bundle_identifier}"
+      rescue
+        # a multitude of HTTP-related errors can occur
+      end
+
+      json_string = json.read
+      
+      application_information = ActiveSupport::JSON.decode(json_string)
+      
+      if (application_information['resultCount'] == 1) 
+        self.icon_small_url = application_information['results'][0]['artworkUrl60']
+        self.icon_url = application_information['results'][0]['artworkUrl512']
+        
+        self.save
+        
+      else
+        puts "Unexpected number of result in API search"
+      end
+      
+    end
+    
+    
     def fetch_version_number_from_apple_server
+      fetch_application_information_from_apple_api()
+      
       if apple_identifier.nil?
         return :alert => "Unable to fetch version number because AppleID is not specified"
       end

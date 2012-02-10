@@ -12,6 +12,7 @@ end
 
 <table>
   <tr>
+    <th></th>
     <th>Title</th>
     <th>Application bundle identifier</th>
     <th>Published version number</th>
@@ -32,6 +33,7 @@ end
 		end
 	end
 	%>" >
+	  <td><%= image_tag(ios_application.icon_small_url, :size => "35x35") if ios_application.icon_small_url %></td>
     <td><%= ios_application.title %></td>
     <td><%= ios_application.application_bundle_identifier %></td>
     <td><%= ios_application.published_version_number %></td>
